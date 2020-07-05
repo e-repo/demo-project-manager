@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Model\User\Entity;
 
+use Ramsey\Uuid\Nonstandard\Uuid;
+
 class User
 {
     /**
@@ -42,6 +44,9 @@ class User
         return $this->id;
     }
 
+    /**
+     * @return \DateTimeImmutable
+     */
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;

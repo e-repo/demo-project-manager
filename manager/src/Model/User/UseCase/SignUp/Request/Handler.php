@@ -8,7 +8,7 @@ use App\Model\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Nonstandard\Uuid;
 
-class Handler
+class Handler0
 {
     private $em;
 

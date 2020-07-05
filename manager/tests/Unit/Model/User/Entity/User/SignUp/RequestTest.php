@@ -20,6 +20,7 @@ class RequestTest extends TestCase
         );
 
         self::assertEquals($id, $user->getId());
+        self::assertEquals($createdAt, $user->getCreatedAt());
         self::assertEquals($email, $user->getEmail());
         self::assertEquals($hash, $user->getPasswordHash());
     }
