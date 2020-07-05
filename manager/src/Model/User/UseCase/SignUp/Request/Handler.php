@@ -6,6 +6,7 @@ namespace App\Model\User\UseCase\SignUp\Request;
 
 use App\Model\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Nonstandard\Uuid;
 
 class Handler
 {
@@ -25,11 +26,13 @@ class Handler
         }
 
         $user = new User(
+            Uuid::uuid4()->toString(),
+            new \DateTimeImmutable(),
             $email,
             password_hash($command->password, PASSWORD_ARGON2I, ['cost' => 12])
         );
 
-        $this->em->persist();
+        $this->em->persist($user);
         $this->em->flush();
     }
 }
