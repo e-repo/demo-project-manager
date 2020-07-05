@@ -29,7 +29,7 @@ class User
     public function __construct(string $id, \DateTimeImmutable $createdAt, string $email, string $hash)
     {
         $this->id = $id;
-        $this->createdAt = $createdAt,
+        $this->createdAt = $createdAt;
         $this->email = $email;
         $this->passwordHash = $hash;
     }
