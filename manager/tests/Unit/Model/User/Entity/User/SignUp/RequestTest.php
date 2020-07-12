@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Test\Model\User\Entity\User\SignUp;
 
-use App\Model\User\Entity\User;
+use App\Model\User\Entity\User\Email;
+use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\User;
+use App\Model\User\Service\PasswordHasher;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Nonstandard\Uuid;
 
 class RequestTest extends TestCase
 {
     public function testSuccess(): void
     {
         $user = new User(
-            $id = Uuid::uuid4()->toString(),
+            $id = Id::next(),
             $createdAt = new \DateTimeImmutable(),
-            $email = 'test@app.test',
-            $hash = 'hash'
+            $email = new Email('test@app.test'),
+            $hash = (new PasswordHasher())->hash('hash')
         );
 
         self::assertEquals($id, $user->getId());
