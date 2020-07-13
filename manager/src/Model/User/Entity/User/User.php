@@ -6,6 +6,9 @@ namespace App\Model\User\Entity\User;
 
 class User
 {
+    private const STATUS_WAIT = 'wait';
+    private const STATUS_ACTIVE = 'active';
+
     /**
      * @var string
      */
@@ -23,18 +26,51 @@ class User
      */
     private $passwordHash;
     /**
+     * @var string
+     */
+    private $confirmToken;
+    /**
+     * @var string
+     */
+    private $status;
+
+    /**
      * User constructor.
      * @param Id $id
      * @param \DateTimeImmutable $createdAt
      * @param Email $email
      * @param string $hash
+     * @param string $token
      */
-    public function __construct(Id $id, \DateTimeImmutable $createdAt, Email $email, string $hash)
+    public function __construct(
+        Id $id,
+        \DateTimeImmutable $createdAt,
+        Email $email,
+        string $hash,
+        string $token
+    )
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
         $this->email = $email;
         $this->passwordHash = $hash;
+        $this->confirmToken = $token;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isWait(): bool
+    {
+        return $this->status === self::STATUS_WAIT;
     }
     /**
      * @return Id

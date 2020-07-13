@@ -9,6 +9,8 @@ use App\Model\User\Entity\User\Email;
 use App\Model\User\Entity\User\Id;
 use App\Model\User\Entity\User\User;
 use App\Model\User\Entity\User\UserRepository;
+use App\Model\User\Service\ConfirmTokenizer;
+use App\Model\User\Service\ConfirmTokenSender;
 use App\Model\User\Service\PasswordHasher;
 
 class Handler {
@@ -24,12 +26,36 @@ class Handler {
      * @var Flusher
      */
     private $flusher;
+    /**
+     * @var ConfirmTokenizer
+     */
+    private $tokenizer;
+    /**
+     * @var ConfirmTokenSender;
+     */
+    private $sender;
 
-    public function __construct(UserRepository $users, PasswordHasher $hasher, Flusher $flusher)
+    /**
+     * Handler constructor.
+     * @param UserRepository $users
+     * @param PasswordHasher $hasher
+     * @param Flusher $flusher
+     * @param ConfirmTokenizer $tokenizer
+     * @param ConfirmTokenSender $sender
+     */
+    public function __construct(
+        UserRepository $users,
+        PasswordHasher $hasher,
+        Flusher $flusher,
+        ConfirmTokenizer $tokenizer,
+        ConfirmTokenSender $sender
+    )
     {
         $this->users = $users;
         $this->hasher = $hasher;
         $this->flusher = $flusher;
+        $this->tokenizer = $tokenizer;
+        $this->sender = $sender;
     }
 
     public function handle(Command $command): void
@@ -44,8 +70,13 @@ class Handler {
             Id::next(),
             new \DateTimeImmutable(),
             new Email($command->email),
-            $this->hasher->hash($command->password)
+            $this->hasher->hash($command->password),
+            $token = $this->tokenizer->generate()
         );
+
+        $this->users->add($user);
+
+        $this->sender->send($email, $token);
 
         $this->flusher->flush();
     }
