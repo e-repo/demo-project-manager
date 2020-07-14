@@ -18,12 +18,17 @@ class RequestTest extends TestCase
             $id = Id::next(),
             $createdAt = new \DateTimeImmutable(),
             $email = new Email('test@app.test'),
-            $hash = (new PasswordHasher())->hash('hash')
+            $hash = (new PasswordHasher())->hash('hash'),
+            $token = 'token'
         );
+
+        self::assertTrue($user->isWait());
+        self::assertFalse($user->isActive());
 
         self::assertEquals($id, $user->getId());
         self::assertEquals($createdAt, $user->getCreatedAt());
         self::assertEquals($email, $user->getEmail());
         self::assertEquals($hash, $user->getPasswordHash());
+        self::assertEquals($token, $user->getConfirmToken());
     }
 }

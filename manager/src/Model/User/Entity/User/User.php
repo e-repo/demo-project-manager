@@ -26,7 +26,7 @@ class User
      */
     private $passwordHash;
     /**
-     * @var string
+     * @var string | null
      */
     private $confirmToken;
     /**
@@ -55,6 +55,7 @@ class User
         $this->email = $email;
         $this->passwordHash = $hash;
         $this->confirmToken = $token;
+        $this->status = self::STATUS_WAIT;
     }
 
     /**
@@ -99,5 +100,12 @@ class User
     public function getPasswordHash(): string
     {
         return $this->passwordHash;
+    }
+    /**
+     * @return string | null
+     */
+    public function getConfirmToken(): ?string
+    {
+        return $this->confirmToken;
     }
 }
