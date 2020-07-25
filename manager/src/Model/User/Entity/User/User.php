@@ -21,7 +21,7 @@ class User
      */
     private $createdAt;
     /**
-     * @var string
+     * @var Email
      */
     private $email;
     /**
@@ -33,38 +33,87 @@ class User
      */
     private $confirmToken;
     /**
+     * @var ResetToken | null
+     */
+    private $resetToken;
+    /**
      * @var string
      */
     private $status;
     /**
      * @var Network[]|ArrayCollection
      */
-    private $network;
+    private $networks;
 
     /**
      * User constructor.
      * @param Id $id
      * @param \DateTimeImmutable $createdAt
-     * @param Email $email
-     * @param string $hash
-     * @param string $token
      */
-    public function __construct(
-        Id $id,
-        \DateTimeImmutable $createdAt,
-        Email $email,
-        string $hash,
-        string $token
-    )
+    public function __construct(Id $id, \DateTimeImmutable $createdAt)
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
+        $this->status = self::STATUS_NEW;
+        $this->networks = new ArrayCollection();
+    }
+
+    public function signUpByEmail(Email $email, string $hash, string $token): void
+    {
+        if (! $this->isNew()) {
+            throw new \DomainException('User is already signed up.');
+        }
+
         $this->email = $email;
         $this->passwordHash = $hash;
         $this->confirmToken = $token;
         $this->status = self::STATUS_WAIT;
     }
+    /**
+     * @param string $network
+     * @param string $identity
+     */
+    public function signUpByNetwork(string $network, string $identity): void
+    {
+        if (! $this->isNew()) {
+            throw new \DomainException('User is already signed up.');
+        }
 
+        $this->attachNetwork($network, $identity);
+        $this->status = self::STATUS_ACTIVE;
+    }
+    /**
+     * @param ResetToken $token
+     * @param \DateTimeImmutable $date
+     */
+    public function requestPasswordReset(ResetToken $token, \DateTimeImmutable $date): void
+    {
+        if (!$this->email) {
+            throw new \DomainException('Email is not specified.');
+        }
+        if ($this->resetToken && !$this->resetToken->isExpiredTo($date)) {
+            throw new \DomainException('Resetting is already request.');
+        }
+        $this->resetToken = $token;
+    }
+    public function passwordReset(\DateTimeImmutable $date, string $hash): void
+    {
+        if (!$this->resetToken) {
+            throw new \DomainException('Resisting is not requested.');
+        }
+        if ($this->resetToken->isExpiredTo($date)) {
+            throw new \DomainException('Reset token is expired.');
+        }
+        $this->passwordHash = $hash;
+        $this->resetToken = null;
+    }
+    /**
+     * @return bool
+     */
+    public function isNew(): bool
+    {
+        return $this->status === self::STATUS_NEW;
+    }
     /**
      * @return bool
      */
@@ -72,7 +121,6 @@ class User
     {
         return $this->status === self::STATUS_ACTIVE;
     }
-
     /**
      *
      */
@@ -107,9 +155,9 @@ class User
         return $this->createdAt;
     }
     /**
-     * @return Email
+     * @return Email|null
      */
-    public function getEmail(): Email
+    public function getEmail(): ?Email
     {
         return $this->email;
     }
@@ -126,5 +174,33 @@ class User
     public function getConfirmToken(): ?string
     {
         return $this->confirmToken;
+    }
+    /**
+     * @return Network[]|ArrayCollection
+     */
+    public function getNetworks()
+    {
+        return $this->networks->toArray();
+    }
+    /**
+     * @return ResetToken|null
+     */
+    public function getRequestToken(): ?ResetToken
+    {
+        return $this->resetToken;
+    }
+    /**
+     * @param string $network
+     * @param string $identity
+     */
+    private function attachNetwork(string $network, string $identity): void
+    {
+        foreach ($this->networks as $existing) {
+            if ($existing->isForNetwork($network)) {
+                throw new \DomainException('Network is already attached.');
+            }
+        }
+
+        $this->networks->add(new Network($this, $network, $identity));
     }
 }

@@ -32,15 +32,24 @@ class Network
         $this->network = $network;
         $this->identity = $identity;
     }
-
+    /**
+     * @param string $network
+     * @return bool
+     */
     public function isForNetwork(string $network): bool
     {
         return $this->network === $network;
     }
+    /**
+     * @return string
+     */
     public function getNetwork(): string
     {
         return $this->network;
     }
+    /**
+     * @return string
+     */
     public function getIdentity(): string
     {
         return $this->identity;

@@ -2,22 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Test\Model\User\Entity\User\SignUp;
+namespace App\Tests\Unit\Model\User\Entity\User\SignUp;
 
 use App\Model\User\Entity\User\Email;
-use App\Model\User\Entity\User\Id;
-use App\Model\User\Entity\User\User;
 use App\Model\User\Service\PasswordHasher;
+use App\Tests\Builder\User\UserBuilder;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $user = new User(
-            $id = Id::next(),
-            $createdAt = new \DateTimeImmutable(),
-            $email = new Email('test@app.test'),
+        $user = (new UserBuilder())->build();
+        $user->signUpByEmail(
+            $email = new Email('test@test.test'),
             $hash = (new PasswordHasher())->hash('hash'),
             $token = 'token'
         );
@@ -25,10 +23,21 @@ class RequestTest extends TestCase
         self::assertTrue($user->isWait());
         self::assertFalse($user->isActive());
 
-        self::assertEquals($id, $user->getId());
-        self::assertEquals($createdAt, $user->getCreatedAt());
         self::assertEquals($email, $user->getEmail());
         self::assertEquals($hash, $user->getPasswordHash());
         self::assertEquals($token, $user->getConfirmToken());
+    }
+
+    public function testAlready(): void
+    {
+        $user = (new UserBuilder())->build();
+        $user->signUpByEmail(
+            $email = new Email('test@test.test'),
+            $hash = (new PasswordHasher())->hash('hash'),
+            $token = 'token'
+        );
+
+        self::expectExceptionMessage('User is already signed up.');
+        $user->signUpByEmail($email, $hash, $token);
     }
 }
