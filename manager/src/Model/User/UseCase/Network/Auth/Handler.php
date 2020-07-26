@@ -32,8 +32,14 @@ class Handler
             throw new \DomainException('User already exist.');
         }
 
-        $user = new User(Id::next(), new \DateTimeImmutable());
-        $user->signUpByNetwork($command->network, $command->identity);
+        $user = new User(
+            Id::next(),
+            new \DateTimeImmutable()
+        );
+        $user->signUpByNetwork(
+            $command->network,
+            $command->identity
+        );
         $this->users->add($user);
         $this->flusher->flush();
     }

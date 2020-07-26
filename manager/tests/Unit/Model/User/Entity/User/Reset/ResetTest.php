@@ -16,6 +16,7 @@ class ResetTest extends TestCase
         $token = new ResetToken('token', $now->modify('+1 day'));
         $user  = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
 
         $user->requestPasswordReset($token, $now);
@@ -30,6 +31,7 @@ class ResetTest extends TestCase
     {
         $user = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
         $now = new \DateTimeImmutable();
         $token = new ResetToken('token', $now->modify('+1 day'));
@@ -44,6 +46,7 @@ class ResetTest extends TestCase
     {
         $user = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
         $now = new \DateTimeImmutable();
 

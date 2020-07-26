@@ -17,11 +17,12 @@ class RequestTest extends TestCase
 
         $user = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
 
         $user->requestPasswordReset($token, $now);
 
-        self::assertNotNull($user->getRequestToken());
+        $this->assertNotNull($user->getRequestToken());
     }
 
     public function testAlready(): void
@@ -31,10 +32,11 @@ class RequestTest extends TestCase
 
         $user = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
 
         $user->requestPasswordReset($token, $now);
-        self::expectExceptionMessage('Resetting is already request.');
+        $this->expectExceptionMessage('Resetting is already request.');
         $user->requestPasswordReset($token, $now);
     }
 
@@ -43,15 +45,40 @@ class RequestTest extends TestCase
         $now = new \DateTimeImmutable();
         $user = $user = (new UserBuilder())
             ->viaEmail()
+            ->confirmed()
             ->build();
 
         $token1 = new ResetToken('token', $now->modify('+1 day'));
         $token2 = new ResetToken('token', $now->modify('+3 day'));
 
         $user->requestPasswordReset($token1, $now);
-        self::assertEquals($token1, $user->getRequestToken());
+        $this->assertEquals($token1, $user->getRequestToken());
 
         $user->requestPasswordReset($token2, $now->modify('+2 day'));
-        self::assertEquals($token2, $user->getRequestToken());
+        $this->assertEquals($token2, $user->getRequestToken());
+    }
+
+    public function testNotConfirmed(): void
+    {
+        $now = new \DateTimeImmutable();
+        $token = new ResetToken('token', $now->modify('+1 day'));
+        $user = (new UserBuilder())
+            ->viaEmail()
+            ->build();
+
+        $this->expectExceptionMessage('User is not active.');
+        $user->requestPasswordReset($token, $now);
+    }
+
+    public function testWithoutEmail(): void
+    {
+        $now = new \DateTimeImmutable();
+        $token = new ResetToken('token', $now->modify('+1 day'));
+        $user = (new UserBuilder())
+            ->viaNetwork()
+            ->build();
+
+        $this->expectExceptionMessage('Email is not specified.');
+        $user->requestPasswordReset($token, $now);
     }
 }
