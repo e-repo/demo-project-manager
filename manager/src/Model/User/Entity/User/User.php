@@ -50,37 +50,44 @@ class User
      * @param Id $id
      * @param \DateTimeImmutable $createdAt
      */
-    public function __construct(Id $id, \DateTimeImmutable $createdAt)
+    private function __construct(Id $id, \DateTimeImmutable $createdAt)
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
-        $this->status = self::STATUS_NEW;
         $this->networks = new ArrayCollection();
     }
 
-    public function signUpByEmail(Email $email, string $hash, string $token): void
-    {
-        if (! $this->isNew()) {
-            throw new \DomainException('User is already signed up.');
-        }
-
-        $this->email = $email;
-        $this->passwordHash = $hash;
-        $this->confirmToken = $token;
-        $this->status = self::STATUS_WAIT;
-    }
     /**
+     * @param Id $id
+     * @param \DateTimeImmutable $createdAt
+     * @param Email $email
+     * @param string $hash
+     * @param string $token
+     * @return static
+     */
+    public static function signUpByEmail(Id $id, \DateTimeImmutable $createdAt, Email $email, string $hash, string $token): self
+    {
+        $user = new self($id, $createdAt);
+        $user->email = $email;
+        $user->passwordHash = $hash;
+        $user->confirmToken = $token;
+        $user->status = self::STATUS_WAIT;
+        return $user;
+    }
+
+    /**
+     * @param Id $id
+     * @param \DateTimeImmutable $createdAt
      * @param string $network
      * @param string $identity
+     * @return User
      */
-    public function signUpByNetwork(string $network, string $identity): void
+    public static function signUpByNetwork(Id $id, \DateTimeImmutable $createdAt, string $network, string $identity): self
     {
-        if (! $this->isNew()) {
-            throw new \DomainException('User is already signed up.');
-        }
-
-        $this->attachNetwork($network, $identity);
-        $this->status = self::STATUS_ACTIVE;
+        $user = new self($id, $createdAt);
+        $user->attachNetwork($network, $identity);
+        $user->status = self::STATUS_ACTIVE;
+        return $user;
     }
     /**
      * @param ResetToken $token

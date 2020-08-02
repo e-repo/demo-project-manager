@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Model\User\Entity\User\SignUp;
 
 use App\Model\User\Entity\User\Email;
+use App\Model\User\Entity\User\Id;
+use App\Model\User\Entity\User\User;
 use App\Model\User\Service\PasswordHasher;
 use App\Tests\Builder\User\UserBuilder;
 use PHPUnit\Framework\TestCase;
@@ -13,31 +15,27 @@ class RequestTest extends TestCase
 {
     public function testSuccess(): void
     {
-        $user = (new UserBuilder())->build();
-        $user->signUpByEmail(
-            $email = new Email('test@test.test'),
-            $hash = (new PasswordHasher())->hash('hash'),
+        $user = User::signUpByEmail(
+            Id::next(),
+            new \DateTimeImmutable(),
+            $email = new Email('test@test.ru'),
+            $hash = 'hash',
             $token = 'token'
         );
 
-        self::assertTrue($user->isWait());
-        self::assertFalse($user->isActive());
+        $this->assertTrue($user->isWait());
+        $this->assertFalse($user->isActive());
 
-        self::assertEquals($email, $user->getEmail());
-        self::assertEquals($hash, $user->getPasswordHash());
-        self::assertEquals($token, $user->getConfirmToken());
-    }
-
-    public function testAlready(): void
-    {
-        $user = (new UserBuilder())->build();
-        $user->signUpByEmail(
-            $email = new Email('test@test.test'),
-            $hash = (new PasswordHasher())->hash('hash'),
+        $this->assertEquals($email, $user->getEmail());
+        $this->assertEquals($hash, $user->getPasswordHash());
+        $this->assertEquals($token, $user->getConfirmToken());
+        $this->expectExceptionMessage('User is already signed up.');
+        User::signUpByEmail(
+            Id::next(),
+            new \DateTimeImmutable(),
+            $email = new Email('test@test.ru'),
+            $hash = 'hash',
             $token = 'token'
         );
-
-        self::expectExceptionMessage('User is already signed up.');
-        $user->signUpByEmail($email, $hash, $token);
     }
 }
