@@ -29,6 +29,7 @@ class RequestTest extends TestCase
         $this->assertEquals($email, $user->getEmail());
         $this->assertEquals($hash, $user->getPasswordHash());
         $this->assertEquals($token, $user->getConfirmToken());
+
         $this->expectExceptionMessage('User is already signed up.');
         User::signUpByEmail(
             Id::next(),
