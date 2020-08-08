@@ -13,26 +13,26 @@ use PHPUnit\Framework\TestCase;
 
 class AuthTest extends TestCase
 {
+    const NETWORK_NAME = 'vk';
+    const NETWORK_IDENTITY = '0000001';
+
     public function testSuccess(): void
     {
         $user = User::signUpByNetwork(
             $id = Id::next(),
             $date = new \DateTimeImmutable(),
-            $network = 'vk',
-            $identity = '0000001'
+            self::NETWORK_NAME,
+            self::NETWORK_IDENTITY
         );
 
-        self::assertCount(1, $networks = $user->getNetworks());
-        self::assertInstanceOf(Network::class, $first = reset($networks));
-        self::assertEquals($network, $first->getNetwork());
-        self::assertEquals($identity, $first->getIdentity());
+        self::assertTrue($user->isActive());
 
-        self::expectExceptionMessage('User is already signed up.');
-        $user = User::signUpByNetwork(
-            $id = Id::next(),
-            $date = new \DateTimeImmutable(),
-            $network = 'vk',
-            $identity = '0000001'
-        );
+        self::assertEquals($id, $user->getId());
+        self::assertEquals($date, $user->getCreatedAt());
+
+        $this->assertCount(1, $networks = $user->getNetworks());
+        $this->assertInstanceOf(Network::class, $first = reset($networks));
+        $this->assertEquals(self::NETWORK_NAME, $first->getNetwork());
+        $this->assertEquals(self::NETWORK_IDENTITY, $first->getIdentity());
     }
 }

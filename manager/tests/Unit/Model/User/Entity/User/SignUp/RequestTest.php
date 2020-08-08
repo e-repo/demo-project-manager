@@ -13,30 +13,26 @@ use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
+    const HASH = 'hash';
+    const TOKEN = 'token';
+
     public function testSuccess(): void
     {
         $user = User::signUpByEmail(
-            Id::next(),
-            new \DateTimeImmutable(),
+            $id = Id::next(),
+            $date = new \DateTimeImmutable(),
             $email = new Email('test@test.ru'),
-            $hash = 'hash',
-            $token = 'token'
+            self::HASH,
+            self::TOKEN
         );
 
         $this->assertTrue($user->isWait());
         $this->assertFalse($user->isActive());
 
+        $this->assertEquals($id, $user->getId());
+        $this->assertEquals($date, $user->getCreatedAt());
         $this->assertEquals($email, $user->getEmail());
-        $this->assertEquals($hash, $user->getPasswordHash());
-        $this->assertEquals($token, $user->getConfirmToken());
-
-        $this->expectExceptionMessage('User is already signed up.');
-        User::signUpByEmail(
-            Id::next(),
-            new \DateTimeImmutable(),
-            $email = new Email('test@test.ru'),
-            $hash = 'hash',
-            $token = 'token'
-        );
+        $this->assertEquals(self::HASH, $user->getPasswordHash());
+        $this->assertEquals(self::TOKEN, $user->getConfirmToken());
     }
 }
