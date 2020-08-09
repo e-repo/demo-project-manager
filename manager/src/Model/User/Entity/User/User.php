@@ -44,6 +44,10 @@ class User
      * @var Network[]|ArrayCollection
      */
     private $networks;
+    /**
+     * @var Role
+     */
+    private $role;
 
     /**
      * User constructor.
@@ -54,6 +58,7 @@ class User
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
+        $this->role = Role::user();
         $this->networks = new ArrayCollection();
     }
 
@@ -106,6 +111,10 @@ class User
         }
         $this->resetToken = $token;
     }
+    /**
+     * @param \DateTimeImmutable $date
+     * @param string $hash
+     */
     public function passwordReset(\DateTimeImmutable $date, string $hash): void
     {
         if (!$this->resetToken) {
@@ -116,6 +125,13 @@ class User
         }
         $this->passwordHash = $hash;
         $this->resetToken = null;
+    }
+    public function changeRole(Role $role): void
+    {
+        if ($this->role->isEqual($role)) {
+            throw new \DomainException('Role is already same.');
+        }
+        $this->role = $role;
     }
     /**
      * @return bool
@@ -210,5 +226,10 @@ class User
         }
 
         $this->networks->add(new Network($this, $network, $identity));
+    }
+
+    public function getRole(): Role
+    {
+        return $this->role;
     }
 }
