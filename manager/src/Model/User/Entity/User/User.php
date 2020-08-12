@@ -5,7 +5,14 @@ declare(strict_types=1);
 namespace App\Model\User\Entity\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * Class User
+ * @package App\Model\User\Entity\User
+ * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
+ */
 class User
 {
     private const STATUS_WAIT = 'wait';
@@ -26,18 +33,22 @@ class User
     private $email;
     /**
      * @var string
+     * @ORM\Column(type="string", name="password_hash", nullable=true)
      */
     private $passwordHash;
     /**
      * @var string | null
+     * @ORM\Column(type="string", name="confirm_token", nullable=true)
      */
     private $confirmToken;
     /**
      * @var ResetToken | null
+     * @ORM\Embedded(class="ResetToken", columnPrefix="reset_token_")
      */
     private $resetToken;
     /**
      * @var string
+     * @ORM\Column(type="string", length=16)
      */
     private $status;
     /**
@@ -231,5 +242,15 @@ class User
     public function getRole(): Role
     {
         return $this->role;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function CheckEmbeds()
+    {
+        if ($this->resetToken->isEmpty()) {
+            $this->resetToken = null;
+        }
     }
 }
