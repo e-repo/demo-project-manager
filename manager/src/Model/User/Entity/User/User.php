@@ -57,6 +57,7 @@ class User
     private $networks;
     /**
      * @var Role
+     * @ORM\Column(type="user_user_role", length=16)
      */
     private $role;
 
