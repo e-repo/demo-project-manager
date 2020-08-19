@@ -21,14 +21,18 @@ class User
 
     /**
      * @var string
+     * @ORM\Column(type="user_user_id")
+     * @ORM\Id()
      */
     private $id;
     /**
      * @var \DateTimeImmutable
+     * @ORM\Column(type="date_immutable")
      */
     private $createdAt;
     /**
      * @var Email
+     * @ORM\Column(type="user_user_email", nullable=true)
      */
     private $email;
     /**
@@ -53,6 +57,7 @@ class User
     private $status;
     /**
      * @var Network[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity="Network", mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
     private $networks;
     /**
