@@ -21,7 +21,7 @@ class EmailType extends StringType
         return !empty($value) ? new Email($value) : null;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return self::NAME;
     }

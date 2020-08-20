@@ -26,7 +26,7 @@ class User
     /**
      * @var string
      * @ORM\Column(type="user_user_id")
-     * @ORM\Id()
+     * @ORM\Id
      */
     private $id;
     /**
@@ -61,6 +61,16 @@ class User
     private $status;
     /**
      * @var Network[]|ArrayCollection
+     *
+     * cascade={"persist"} - задан с целью сохранения сущности пользователя
+     * одновременной с сохранением сущности 'network', что-то вроде
+     * группового сохранения
+     *
+     * mappedBy="user" - создает 'network' четез связь свойство(связь) 'user'
+     *
+     * orphanRemoval=true - дополнительная пометка для каскадного удаления
+     * связанных элементов, что-бы связанные элементы были "наверняка" удалены
+     *
      * @ORM\OneToMany(targetEntity="Network", mappedBy="user", orphanRemoval=true, cascade={"persist"})
      */
     private $networks;

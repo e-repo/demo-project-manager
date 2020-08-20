@@ -25,6 +25,13 @@ class Network
     private $id;
     /**
      * @var User
+     *
+     * inversedBy="networks" - исключает повторное создание юзера через 'network'
+     *
+     * nullable=false - испльзуем с коскадным удалением
+     *
+     * onDelete="CASCADE" - каскадное удаление
+     *
      * @ORM\ManyToOne(targetEntity="User", inversedBy="networks")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */

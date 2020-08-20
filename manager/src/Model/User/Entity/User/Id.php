@@ -23,8 +23,10 @@ class Id
         Assert::notEmpty($value);
         $this->value = $value;
     }
+
     /**
      * @return $this
+     * @throws \Exception
      */
     public static function next(): self
     {
