@@ -31,4 +31,4 @@ doctrine:
                 type: annotation
                 dir: '%kernel.project_dir%/src/Model/User/Entity'
                 prefix: 'App\Model\User\Entity'
-                alias: App
+                alias: User
