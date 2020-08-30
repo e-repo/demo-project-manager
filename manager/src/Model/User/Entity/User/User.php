@@ -24,7 +24,7 @@ class User
     private const STATUS_NEW = 'new';
 
     /**
-     * @var string
+     * @var Id
      * @ORM\Column(type="user_user_id")
      * @ORM\Id
      */
