@@ -8,6 +8,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Model\User\UseCase\SignUp;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class SignUpController extends AbstractController
 {
@@ -25,6 +27,12 @@ class SignUpController extends AbstractController
         $this->logger = $logger;
     }
 
+    /**
+     * @Route("/signup", name="auth.signup")
+     * @param Request $request
+     * @param SignUp\Request\Handler $handler
+     * @return Response
+     */
     public function request(Request $request, SignUp\Request\Handler $handler)
     {
         $command = new SignUp\Request\Command();
