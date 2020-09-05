@@ -20,7 +20,7 @@ docker-build:
 manager-init: manager-composer-install manager-wait-db manager-migrations
 
 manager-wait-db:
-	until docker-compose exec -T manager-postgres `pg_isready` --timeout=0 --dbname=app; do sleep 1 ; done
+	until docker-compose exec -T manager-postgres pg_isready --timeout=0 --dbname=app; do sleep 1; done
 
 manager-migrations:
 	docker-compose run --rm manager-php-cli php bin/console doctrine:migrations:migrate --no-interaction
