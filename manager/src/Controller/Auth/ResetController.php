@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Auth;
+
+use Psr\Log\LoggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use App\Model\User\UseCase\Reset;
+
+class ResetController extends AbstractController
+{
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * ResetController constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @Route("/reset", name="auth.reset")
+     * @param Request $request
+     * @param Reset\Request\Handler $handler
+     * @return Response
+     */
+    public function request(Request $request, Reset\Request\Handler $handler): Response
+    {
+        $command = new Reset\Request\Command();
+
+        $form = $this->createForm(Reset\Request\Form::class, $command);
+    }
+}
