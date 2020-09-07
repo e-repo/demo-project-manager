@@ -38,5 +38,21 @@ class ResetController extends AbstractController
         $command = new Reset\Request\Command();
 
         $form = $this->createForm(Reset\Request\Form::class, $command);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $handler->handle($command);
+                $this->addFlash('success', 'Check your email.');
+                return $this->redirectToRoute('home');
+            } catch (\DomainException $e) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        return $this->render('app/auth/reset/request.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
