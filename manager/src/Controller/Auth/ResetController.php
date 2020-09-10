@@ -55,4 +55,15 @@ class ResetController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/reset", name="auth.reset.reset")
+     * @param string $token
+     * @param Request $request
+     * @param Reset\Reset\Handler $handler
+     */
+    public function reset(string $token, Request $request, Reset\Reset\Handler $handler)
+    {
+
+    }
 }
