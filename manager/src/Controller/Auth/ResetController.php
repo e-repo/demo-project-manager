@@ -61,9 +61,28 @@ class ResetController extends AbstractController
      * @param string $token
      * @param Request $request
      * @param Reset\Reset\Handler $handler
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function reset(string $token, Request $request, Reset\Reset\Handler $handler)
     {
+        $command = new Reset\Reset\Command($token);
 
+        $form = $this->createForm(Reset\Reset\Form::class, $command);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            try {
+                $handler->handle($command);
+                $this->addFlash('success', 'Password is successfully changed.');
+                return $this->redirectToRoute('home');
+            } catch (\DomainException $e) {
+                $this->logger->error($e->getMessage(), ['exception' => $e]);
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        $this->render('app/auth/reset/reset.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }
