@@ -1,6 +1,7 @@
 up: docker-up
 init: docker-down-clear docker-pull docker-build docker-up manager-init
 test: manager-test
+down: docker-down
 
 docker-up:
 	docker-compose up -d
