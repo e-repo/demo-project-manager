@@ -40,7 +40,8 @@ class UserFetcher
                 'id',
                 'email',
                 'password_hash',
-                'role'
+                'role',
+                'status'
             )
             ->from('user_users')
             ->where('email = :email')
