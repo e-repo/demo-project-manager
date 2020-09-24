@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Security;
 
+use App\ReadModel\User\AuthView;
 use App\ReadModel\User\UserFetcher;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -31,12 +32,31 @@ class UserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username): UserInterface
     {
-        $user = $this->users->findForAuth($username);
+        $user = $this->loadUser($username);
+        return self::identityByUser($user);
+    }
 
-        if ($user) {
+    /**
+     * Параметр получаем из cookie пользователя
+     * @param UserInterface $identity
+     * @inheritDoc
+     */
+    public function refreshUser(UserInterface $identity)
+    {
+        $user = $this->loadUser($identity->getUsername());
+        return self::identityByUser($user);
+    }
+
+    private function loadUser($userName): AuthView
+    {
+        if (! $user = $this->users->findForAuth($userName)) {
             throw new UsernameNotFoundException('');
         }
+        return $user;
+    }
 
+    private static function identityByUser(AuthView $user): UserIdentity
+    {
         return new UserIdentity(
             $user->id,
             $user->email,
@@ -44,19 +64,6 @@ class UserProvider implements UserProviderInterface
             $user->role,
             $user->status
         );
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function refreshUser(UserInterface $identity)
-    {
-        if (! $identity instanceof UserInterface)
-        {
-            throw new UnsupportedUserException('Invalid user class ' . get_class($identity));
-        }
-
-        return $identity;
     }
 
     /**
