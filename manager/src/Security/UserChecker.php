@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace App\Security;
+
 use App\Security\UserIdentity;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
@@ -15,11 +17,11 @@ class UserChecker implements UserCheckerInterface
      */
     public function checkPreAuth(UserInterface $identity): void
     {
-        if (!$identity instanceof UserIdentity) {
+        if (! $identity instanceof UserIdentity) {
             return;
         }
 
-        if (!$identity->isActive()) {
+        if (! $identity->isActive()) {
             $exception = new DisabledException('User account is disabled.');
             $exception->setUser($identity);
             throw $exception;
@@ -31,7 +33,7 @@ class UserChecker implements UserCheckerInterface
      */
     public function checkPostAuth(UserInterface $identity): void
     {
-        if (!$identity instanceof UserIdentity) {
+        if (! $identity instanceof UserIdentity) {
             return;
         }
     }
