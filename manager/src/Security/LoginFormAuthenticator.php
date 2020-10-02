@@ -41,7 +41,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $this->csrfTokenManager = $csrfTokenManager;
         $this->hasher = $hasher;
     }
-
+    /**
+     * Проверка принадлежности
+     * аутентификатора к данному запросу
+     * через наименование экшина
+     *
+     * @param Request $request
+     * @return bool
+     */
     public function supports(Request $request)
     {
         return 'app_login' === $request->attributes->get('_route')
@@ -81,7 +88,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         return $user;
     }
-
+    /**
+     * @param mixed $credentials
+     * @param UserInterface $user
+     * @return bool
+     */
     public function checkCredentials($credentials, UserInterface $user): bool
     {
         return $this->hasher->validate($credentials['password'], $user->getPassword());

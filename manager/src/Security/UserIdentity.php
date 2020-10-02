@@ -86,9 +86,9 @@ class UserIdentity implements UserInterface, EquatableInterface
     /**
      * @inheritDoc
      */
-    public function getUsername()
+    public function getUsername(): ?string
     {
-        $this->userName;
+        return $this->userName;
     }
 
     /**

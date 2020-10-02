@@ -6,7 +6,6 @@ namespace App\Security;
 
 use App\ReadModel\User\AuthView;
 use App\ReadModel\User\UserFetcher;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -37,6 +36,9 @@ class UserProvider implements UserProviderInterface
     }
 
     /**
+     * Метод дергается каждый раз при заходе на
+     * любую из страниц
+     *
      * Параметр получаем из cookie пользователя
      * @param UserInterface $identity
      * @inheritDoc
