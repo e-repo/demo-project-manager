@@ -30,7 +30,7 @@ manager-composer-install:
 	docker-compose run --rm manager-php-cli composer install
 
 manager-fixtures:
-	docker-compose run --rm manager-php-cli php bin/console doctrine:fixtures:load
+	docker-compose run --rm manager-php-cli php bin/console doctrine:fixtures:load --no-interaction
 
 manager-test:
 	docker-compose run --rm manager-php-cli php bin/phpunit
