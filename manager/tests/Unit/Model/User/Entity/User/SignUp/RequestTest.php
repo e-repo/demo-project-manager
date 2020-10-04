@@ -26,14 +26,14 @@ class RequestTest extends TestCase
             self::TOKEN
         );
 
-        $this->assertTrue($user->isWait());
-        $this->assertFalse($user->isActive());
+        self::assertTrue($user->isWait());
+        self::assertFalse($user->isActive());
 
-        $this->assertEquals($id, $user->getId());
-        $this->assertEquals($date, $user->getCreatedAt());
-        $this->assertEquals($email, $user->getEmail());
-        $this->assertEquals(self::HASH, $user->getPasswordHash());
-        $this->assertEquals(self::TOKEN, $user->getConfirmToken());
+        self::assertEquals($id, $user->getId());
+        self::assertEquals($date, $user->getCreatedAt());
+        self::assertEquals($email, $user->getEmail());
+        self::assertEquals(self::HASH, $user->getPasswordHash());
+        self::assertEquals(self::TOKEN, $user->getConfirmToken());
 
         self::assertTrue($user->getRole()->isUser());
     }
