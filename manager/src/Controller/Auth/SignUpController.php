@@ -33,7 +33,7 @@ class SignUpController extends AbstractController
      * @param SignUp\Request\Handler $handler
      * @return Response
      */
-    public function request(Request $request, SignUp\Request\Handler $handler)
+    public function request(Request $request, SignUp\Request\Handler $handler): Response
     {
         $command = new SignUp\Request\Command();
 
@@ -51,20 +51,18 @@ class SignUpController extends AbstractController
             }
         }
 
-        dd($form->createView());
-
         return $this->render('app/auth/signup.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/signup/{$token}", name="auth.signup.confirm")
+     * @Route("/signup/{token}", name="auth.signup.confirm")
      * @param string $token
      * @param SignUp\Confirm\Handler $handler
      * @return Response
      */
-    public function confirm(string $token, SignUp\Confirm\Handler $handler)
+    public function confirm(string $token, SignUp\Confirm\Handler $handler): Response
     {
         $command = new SignUp\Confirm\Command($token);
 
